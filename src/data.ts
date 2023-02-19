@@ -1,7 +1,7 @@
-export const buttons = [
+import { IButtonData } from './models';
+export const buttons: IButtonData[] = [
   {
     id: 1,
-    title: 'summer',
     icon: './icons/sun.svg',
     backgroundImg: './summer-bg.jpg',
     soundFile: './sounds/summer.mp3',
@@ -9,7 +9,6 @@ export const buttons = [
   },
   {
     id: 2,
-    title: 'rain',
     icon: './icons/cloud-rain.svg',
     backgroundImg: './rainy-bg.jpg',
     soundFile: './sounds/rain.mp3',
@@ -17,7 +16,6 @@ export const buttons = [
   },
   {
     id: 3,
-    title: 'snow',
     icon: './icons/cloud-snow.svg',
     backgroundImg: './winter-bg.jpg',
     soundFile: './sounds/winter.mp3',
@@ -25,4 +23,4 @@ export const buttons = [
   },
 ];
 
-export const pauseIcon = './icons/pause.svg';
+export const pauseIcon: string = './icons/pause.svg';

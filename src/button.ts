@@ -1,47 +1,41 @@
 import { setBackground } from './utils';
 import { pauseIcon } from './data';
+import { ISoundButton } from 'models';
 
-export class ButtonsListItem {
-  constructor({
-    id,
-    title, 
-    icon, 
-    backgroundImg, 
-    soundFile, 
-    isSelected,
-    parentElem,
-  }) {
-    this.id = id;
-    this.title = title;
-    this.icon = icon;
-    this.backgroundImg = backgroundImg;
-    this.soundFile = soundFile;
-    this.isSelected = isSelected;
-    this.parentElem = parentElem;
+export class ButtonsListItem implements ISoundButton {
+  private audio: HTMLAudioElement;
+  private iconElement?: HTMLElement | null;
+  constructor(
+    public id: number,
+    public icon: string, 
+    public backgroundImg: string, 
+    public soundFile: string, 
+    public isSelected: boolean,
+    public parentElem: HTMLElement,
+  ) {
     this.audio = new Audio(soundFile);
     this.audio.loop = true;
     this.iconElement = null;
   }
 
-  getId() {
-    return this.id;
-  }
-
   toggleIsSelected() {
     this.isSelected = !this.isSelected;
+    return this;
   }
 
   audioStop() {
     this.audio.currentTime = 0;
     this.audio.pause();
+    return this;
   }
 
   togglePauseIcon() {
     if (this.isSelected && this.iconElement) {
       setBackground(this.iconElement, pauseIcon);
     } else {
-      setBackground(this.iconElement, this.icon);
+      setBackground(this.iconElement as HTMLElement, this.icon);
     }
+    return this;
   }
 
   onClick() {
@@ -56,14 +50,15 @@ export class ButtonsListItem {
     }
   }
 
-  changeVolume(value) {
+  changeVolume(value: number) {
     this.audio.volume = value;
+    return this;
   }
 
   render() {
     // кнопка
     const element = document.createElement('button');
-    element.setAttribute('id', this.id);
+    element.setAttribute('id', `${this.id}`);
     element.className = 'buttons-list_item';
     setBackground(element, this.backgroundImg);
 
@@ -76,5 +71,6 @@ export class ButtonsListItem {
 
     // element.append(rangeVolumeElement);
     this.parentElem.append(element);
+    return this;
   }
 }

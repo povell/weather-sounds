@@ -1,45 +1,51 @@
 import { buttons } from './data';
 import { ButtonsListItem } from './button';
 import { setBackground } from './utils';
+import { IButtonData, ISoundButton } from './models';
 import './styles/index.scss';
 
-const buttonsListArray = [];
-let currentButtonId;
+const buttonsListArray: any = [];
+let currentButtonId: number;
 let currentVolume = 1;
-const listContainer = document.querySelector('.buttons-list');
-const mainContainer = document.querySelector('.main_container');
+const listContainer: HTMLElement = document.querySelector('.buttons-list')!;
+const mainContainer: HTMLElement = document.querySelector('.main_container')!;
 
-const onListClick = (event) => {
-  if (event.target && event.target.nodeName.toLowerCase() === 'button'){
+const onListClick = (event:MouseEvent) => {
+  if (event.target 
+    && event.target instanceof HTMLElement 
+    && event.target.nodeName.toLowerCase() === 'button'
+    ){
     event.stopPropagation();
 
-    const buttonIns = buttonsListArray.find(el => el.id === +event.target.id);
-    if (buttonIns.id !== currentButtonId) {
+    const buttonId = event.target?.id;
+    const buttonIns: ISoundButton = buttonsListArray.find((el: IButtonData) => el.id === +buttonId);
+    if (buttonIns && (buttonIns.id !== currentButtonId)) {
       stopAllAudio();
       changeMainBackground(buttonIns.backgroundImg);
       resetAllIsSelected();
+      buttonIns.changeVolume(currentVolume);
+      currentButtonId = +buttonId;
     }
-    currentButtonId = +event.target.id;
-    buttonIns.changeVolume(currentVolume);
+    // buttonIns.changeVolume(currentVolume);
     buttonIns.onClick();
   }
 };
 
 listContainer.addEventListener( "click" , onListClick, true);
 
-function changeMainBackground(backgroundImg) {
+function changeMainBackground(backgroundImg: string) {
   setBackground(mainContainer, backgroundImg);
 };
 
 function resetAllIsSelected() {
-  buttonsListArray.forEach((button) => {
+  buttonsListArray.forEach((button: ISoundButton) => {
     button.isSelected = false;
     button.togglePauseIcon();
   });
 }
 
 function stopAllAudio() {
-  buttonsListArray.forEach((button) => {
+  buttonsListArray.forEach((button: ISoundButton) => {
     button.audioStop();
   });
 }
@@ -48,14 +54,18 @@ function render() {
   // Блок с кнопками
   buttons.forEach((buttonData) => {
     if (buttonData.isSelected) {
-      setBackground(mainContainer, buttonData.backgroundImg);
+      setBackground(mainContainer as HTMLElement, buttonData.backgroundImg as string );
     }
+
+    const { id, icon, backgroundImg, soundFile, isSelected } = buttonData;
   
     const button = new ButtonsListItem(
-      { 
-        ...buttonData, 
-        parentElem: listContainer,
-      }
+      id,
+      icon,
+      backgroundImg,
+      soundFile,
+      isSelected,
+      listContainer,
     );
     buttonsListArray.push(button);
     button.render();
@@ -63,7 +73,7 @@ function render() {
 
   // настройка громкости
   const rangeVolumeElementWrapper = document.createElement('div');
-  const rangeVolumeElement = document.createElement('input');
+  const rangeVolumeElement: HTMLInputElement = document.createElement('input')!;
   rangeVolumeElement.setAttribute('type', 'range');
   rangeVolumeElement.setAttribute('min', '0');
   rangeVolumeElement.setAttribute('max', '100');
@@ -71,8 +81,10 @@ function render() {
   rangeVolumeElement.setAttribute('value', '100');
   rangeVolumeElement.className = 'range-volume';
   rangeVolumeElement.onchange = (event) => {
-    currentVolume = event.target.value/100;
-    const currentButtonIns = buttonsListArray.find(el => el.id === currentButtonId);
+    const target = event.target as HTMLInputElement;
+    currentVolume = +target.value/100;
+    // let currentVolume = event.currentTarget.value/100;
+    const currentButtonIns = buttonsListArray.find((el: ISoundButton) => el.id === currentButtonId);
     if (currentButtonIns) {
       currentButtonIns.changeVolume(currentVolume);
     }
