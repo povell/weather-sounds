@@ -4,29 +4,32 @@ import { setBackground } from './utils';
 import { IButtonData, ISoundButton } from './models';
 import './styles/index.scss';
 
-const buttonsListArray: any = [];
+const buttonsListArray: ISoundButton[] = [];
 let currentButtonId: number;
-let currentVolume = 1;
+let currentVolume: number = 1;
 const listContainer: HTMLElement = document.querySelector('.buttons-list')!;
 const mainContainer: HTMLElement = document.querySelector('.main_container')!;
 
 const onListClick = (event:MouseEvent) => {
-  if (event.target 
-    && event.target instanceof HTMLElement 
-    && event.target.nodeName.toLowerCase() === 'button'
+  const target = event.target as HTMLElement;
+  if (target && target.nodeName.toLowerCase() === 'button'
     ){
     event.stopPropagation();
 
-    const buttonId = event.target?.id;
-    const buttonIns: ISoundButton = buttonsListArray.find((el: IButtonData) => el.id === +buttonId);
-    if (buttonIns && (buttonIns.id !== currentButtonId)) {
+    const buttonId: string = target.id;
+    const buttonIns: ISoundButton | undefined = buttonsListArray.find((el: IButtonData) => el.id === +buttonId);
+    if (!buttonIns) {
+      return;
+    }
+    
+    if (buttonIns.id !== currentButtonId) {
       stopAllAudio();
       changeMainBackground(buttonIns.backgroundImg);
       resetAllIsSelected();
       buttonIns.changeVolume(currentVolume);
       currentButtonId = +buttonId;
     }
-    // buttonIns.changeVolume(currentVolume);
+
     buttonIns.onClick();
   }
 };
@@ -83,7 +86,7 @@ function render() {
   rangeVolumeElement.onchange = (event) => {
     const target = event.target as HTMLInputElement;
     currentVolume = +target.value/100;
-    // let currentVolume = event.currentTarget.value/100;
+    
     const currentButtonIns = buttonsListArray.find((el: ISoundButton) => el.id === currentButtonId);
     if (currentButtonIns) {
       currentButtonIns.changeVolume(currentVolume);

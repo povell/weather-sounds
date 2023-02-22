@@ -1,5 +1,5 @@
 import { setBackground } from './utils';
-import { pauseIcon } from './data';
+import pauseIcon from './assets/icons/pause.svg';
 import { ISoundButton } from 'models';
 
 export class ButtonsListItem implements ISoundButton {
@@ -57,7 +57,7 @@ export class ButtonsListItem implements ISoundButton {
 
   render() {
     // кнопка
-    const element = document.createElement('button');
+    const element: HTMLElement = document.createElement('button');
     element.setAttribute('id', `${this.id}`);
     element.className = 'buttons-list_item';
     setBackground(element, this.backgroundImg);
@@ -68,8 +68,6 @@ export class ButtonsListItem implements ISoundButton {
     setBackground(this.iconElement, this.icon);
 
     element.append(this.iconElement);
-
-    // element.append(rangeVolumeElement);
     this.parentElem.append(element);
     return this;
   }
